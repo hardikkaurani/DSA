@@ -1,0 +1,90 @@
+serial:
+  port: "COM3"                  # Change to your port (COM3, COM4, etc. on Windows; /dev/ttyUSB0 on Linux)
+  baud_rate: 115200
+  timeout: 0.01
+
+audio:
+  sample_rate: 44100
+  buffer_frames: 2048           # Lower = lower latency, higher = more stable
+  max_voices: 8                 # Limit simultaneous notes for performance
+  decay_rate: 0.994
+
+sensor:
+  max_force: 500
+  min_force_threshold: 140
+  roll_smoothing_alpha: 0.7     # Exponential moving average smoothing (unused for now)
+
+tuning:
+  # Open E tuning (standard for slide guitars)
+  strings:
+    - {angle: -40, note: "E2", freq: 82.41}
+    - {angle: -25, note: "A2", freq: 110.0}
+    - {angle: -10, note: "D3", freq: 146.83}
+    - {angle: 5,   note: "G3", freq: 196.0}
+    - {angle: 20,  note: "B3", freq: 246.94}
+    - {angle: 35,  note: "E4", freq: 329.63}
+
+chords:
+  enabled: true
+  angle_tolerance: 3            # degrees of tolerance for angle detection
+
+logging:
+  level: "INFO"                 # DEBUG, INFO, WARNING, ERROR
+  file: "air_guitar.log"
+
+# ========== ADVANCED FEATURES ==========
+
+instruments:
+  default: "classic_guitar"
+  models:
+    classic_guitar:
+      decay_rate: 0.994
+      brightness: 0.8
+      resonance: 0.2
+    acoustic_guitar:
+      decay_rate: 0.992
+      brightness: 0.7
+      resonance: 0.4
+    electric_guitar:
+      decay_rate: 0.985
+      brightness: 0.95
+      resonance: 0.1
+
+effects:
+  enabled: true
+  reverb:
+    enabled: true
+    room_size: 0.5           # 0-1
+    damping: 0.5
+    wet_level: 0.3
+    dry_level: 0.7
+  delay:
+    enabled: false
+    time_ms: 300
+    feedback: 0.4
+  distortion:
+    enabled: false
+    amount: 0.3              # 0-1
+
+chord_detection:
+  enabled: true
+  simultaneous_notes_min: 2   # Minimum notes for chord detection
+  angle_tolerance_chord: 4.0  # Wider tolerance for chords
+
+midi:
+  enabled: false
+  out_device: null            # null = system default
+  midi_channel: 0
+  velocity_max: 127
+
+recording:
+  enabled: false
+  auto_record: false          # Auto-start on launch
+  output_folder: "./recordings"
+  sample_rate: 44100
+
+web:
+  enabled: false
+  host: "127.0.0.1"
+  port: 5000
+  debug: false

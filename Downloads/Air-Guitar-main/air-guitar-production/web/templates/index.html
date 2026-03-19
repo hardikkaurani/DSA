@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Guitar Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .status-label {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .status-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e68900;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .toggle {
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle.active {
+            background: #4caf50;
+        }
+        
+        .toggle-thumb {
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle.active .toggle-thumb {
+            left: 32px;
+        }
+        
+        .notes-display {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .note {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎸 Air Guitar Control</h1>
+        
+        <div class="grid">
+            <!-- Recording Card -->
+            <div class="card">
+                <h2>🎙️ Recording</h2>
+                <div class="status">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value" id="recording-status">Stopped</span>
+                </div>
+                <div class="button-group">
+                    <button class="btn-success" onclick="startRecording()">Start</button>
+                    <button class="btn-danger" onclick="stopRecording()">Stop</button>
+                </div>
+            </div>
+            
+            <!-- Instrument Card -->
+            <div class="card">
+                <h2>🎺 Instrument</h2>
+                <select id="instrument-select" onchange="changeInstrument()">
+                    <option value="classic_guitar">Classic Guitar</option>
+                    <option value="acoustic_guitar">Acoustic Guitar</option>
+                    <option value="electric_guitar">Electric Guitar</option>
+                    <option value="bass_guitar">Bass Guitar</option>
+                    <option value="synth_string">Synth String</option>
+                </select>
+            </div>
+            
+            <!-- Sensor Monitoring Card -->
+            <div class="card">
+                <h2>📊 Sensor Data</h2>
+                <div class="status">
+                    <span class="status-label">Wrist Angle:</span>
+                    <span class="status-value" id="sensor-roll">0.0°</span>
+                </div>
+                <div class="status">
+                    <span class="status-label">Force:</span>
+                    <span class="status-value" id="sensor-force">0</span>
+                </div>
+                <div class="status">
+                    <span class="status-label">Active Voices:</span>
+                    <span class="status-value" id="active-voices">0</span>
+                </div>
+            </div>
+            
+            <!-- Effects Card -->
+            <div class="card">
+                <h2>✨ Effects</h2>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="toggleEffect('reverb')">Reverb</button>
+                    <button class="btn-primary" onclick="toggleEffect('delay')">Delay</button>
+                    <button class="btn-primary" onclick="toggleEffect('distortion')">Distortion</button>
+                </div>
+            </div>
+            
+            <!-- MIDI Card -->
+            <div class="card">
+                <h2>🎼 MIDI</h2>
+                <div class="button-group">
+                    <button class="btn-warning" onclick="toggleMIDI('enable')">Enable MIDI</button>
+                    <button class="btn-danger" onclick="toggleMIDI('disable')">Disable MIDI</button>
+                </div>
+            </div>
+            
+            <!-- Active Notes Card -->
+            <div class="card">
+                <h2>🎵 Active Notes</h2>
+                <div class="notes-display" id="notes-display">
+                    <span style="color: #999;">No notes playing</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Air Guitar - Production Grade System</p>
+            <p>Connect to http://localhost:5000 to control</p>
+        </div>
+    </div>
+    
+    <script>
+        // Update state every 500ms
+        setInterval(updateState, 500);
+        
+        async function updateState() {
+            try {
+                const response = await fetch('/api/state');
+                const data = await response.json();
+                
+                // Update status
+                document.getElementById('recording-status').textContent = 
+                    data.recording ? 'Recording...' : 'Stopped';
+                document.getElementById('sensor-roll').textContent = 
+                    data.sensor_roll.toFixed(1) + '°';
+                document.getElementById('sensor-force').textContent = 
+                    data.sensor_force;
+                document.getElementById('active-voices').textContent = 
+                    data.active_voices;
+                
+                // Update held notes
+                const notesDisplay = document.getElementById('notes-display');
+                if (data.held_notes && data.held_notes.length > 0) {
+                    notesDisplay.innerHTML = data.held_notes
+                        .map(note => `<div class="note">${note}</div>`)
+                        .join('');
+                } else {
+                    notesDisplay.innerHTML = '<span style="color: #999;">No notes playing</span>';
+                }
+            } catch (error) {
+                console.error('Error fetching state:', error);
+            }
+        }
+        
+        async function startRecording() {
+            try {
+                const response = await fetch('/api/control/recording/start', { method: 'POST' });
+                const data = await response.json();
+                alert(data.status || data.error);
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+        
+        async function stopRecording() {
+            try {
+                const response = await fetch('/api/control/recording/stop', { method: 'POST' });
+                const data = await response.json();
+                alert(data.status || data.error);
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+        
+        async function changeInstrument() {
+            const instrument = document.getElementById('instrument-select').value;
+            try {
+                const response = await fetch(`/api/control/instrument/${instrument}`, { method: 'POST' });
+                const data = await response.json();
+                console.log(data.status);
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+        
+        async function toggleEffect(effectName) {
+            try {
+                const response = await fetch(`/api/control/effects/${effectName}/enable`, { method: 'POST' });
+                const data = await response.json();
+                console.log(data.status);
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+        
+        async function toggleMIDI(action) {
+            try {
+                const response = await fetch(`/api/control/midi/${action}`, { method: 'POST' });
+                const data = await response.json();
+                alert(data.status || data.error);
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+        
+        // Initial state update
+        updateState();
+    </script>
+</body>
+</html>
